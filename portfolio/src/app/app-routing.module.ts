@@ -1,7 +1,18 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { SparkAnalysisComponent } from './projects/spark-analysis/spark-analysis.component';
+import { StocksAnalysisComponent } from './projects/stocks-analysis/stocks-analysis.component';
+import { SparkCodeComponent } from './projects/spark-code/spark-code.component';
+import { StocksCodeComponent } from './projects/stocks-code/stocks-code.component';
+import { AboutMeComponent } from './homepage/about-me/about-me.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+  {path: "", component: AboutMeComponent},
+  {path: "sparkAnalysis", component: SparkAnalysisComponent},
+  {path: "sparkCode", component: SparkCodeComponent},
+  {path: "stockCode", component: StocksCodeComponent},
+  {path: "stockAnalysis", component: StocksAnalysisComponent},
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
