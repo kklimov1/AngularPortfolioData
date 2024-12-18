@@ -1,4 +1,36 @@
-<mat-toolbar>
-    <span>Portfolio</span>
-    <button mat-button routerLink = "/sparkAnalysis">Spark Project</button>
+<mat-toolbar color="white">
+    <div class="title-container">
+        <span class="toolbar-title">Kirill Klimov</span>
+        <span class="logo-buttons">
+            <a href="https://github.com/kklimov1" class="image-button">
+                <img src="assets/GitHub_Lockup_Light.png" alt="GitHub Logo" class="ghub-logo">
+            </a>
+            <a href="https://www.linkedin.com/in/kirill-klimov-001/" class="image-button">
+                <img src="assets/in.png" alt="GitHub Logo" class="in-logo">
+            </a>
+        </span>
+    </div>
+    <span class="space-gen"></span>
+    <div id="buttons">
+        <button mat-flat-button class="menu-button" routerLink="/">About & Contact</button>
+
+        <button mat-flat-button [matMenuTriggerFor]="sparkMenu" class="menu-button">Spark Project</button>
+        <mat-menu #sparkMenu="matMenu" yPosition="below">
+            <div matRipple matRippleColor="rgba(0, 0, 255, 0.3)">
+                <button mat-menu-item routerLink = "/sparkAnalysis">Analysis</button>
+                <button mat-menu-item routerLink = "/sparkAnalysis">Technicals + Code</button>
+            </div>
+        </mat-menu>
+        
+        <button mat-flat-button [matMenuTriggerFor]="stockMenu" class="menu-button">Stock Predictor </button>
+        <mat-menu #stockMenu="matMenu" yPosition="below">
+            <button mat-menu-item routerLink = "/sAnalysis">Analysis</button>
+            <button mat-menu-item routerLink = "/sAnlysis">Technicals + Code</button>
+        </mat-menu>
+
+        
+    </div>
+    
+    
+
 </mat-toolbar>

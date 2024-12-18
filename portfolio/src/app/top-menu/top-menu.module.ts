@@ -4,6 +4,8 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import {MatMenuModule} from '@angular/material/menu';
+import { MatRippleModule } from '@angular/material/core';
 import { RouterModule } from '@angular/router';
 
 @NgModule({
@@ -15,7 +17,9 @@ import { RouterModule } from '@angular/router';
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    RouterModule
+    MatMenuModule,
+    MatRippleModule,
+    RouterModule,
   ],
   exports: [
     MatIconModule,

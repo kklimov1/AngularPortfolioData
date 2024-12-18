@@ -8,6 +8,7 @@ import { HomepageModule } from './homepage/homepage.module';
 import { ProjectsModule } from './projects/projects.module';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from './shared/shared.module';
+import { MatMenuModule } from '@angular/material/menu';
 import { SparkAnalysisComponent } from './projects/spark-analysis/spark-analysis.component';
 
 const routes: Routes =[
@@ -25,7 +26,8 @@ const routes: Routes =[
     ProjectsModule,
     HomepageModule,
     SharedModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    MatMenuModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
