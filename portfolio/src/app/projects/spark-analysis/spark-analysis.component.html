@@ -3,5 +3,20 @@
     <h2>Spark Project: Analysis</h2>
     <p>Purpose: To display the functionality and workflow of Spark</p>
     <br>
-    
+    <p>
+        Spark is an engine used for working with large-scale data workloads that supports multiple programming languages including Python, Scala, and SQL.
+        The fundamental aspect of Apache Spark is its use of RDD (or Resilient Distributed Dataset). An RDD 
+        represents a collection of objects that are split across a cluster of machines that are typically referred to as nodes.
+    </p>
+    <p>
+        The driver node holds meta information, and, among other things, creates an interface for the analyst via the SparkContext. 
+        The SparkContext determines a plan, and (via the Cluster Manager) coordinates the executor nodes to run certain tasks. Once the executor nodes complete their tasks,
+        the results are returned to the driver node.
+    </p>
+    <p>
+        Spark includes a number of libraries to support your workflow, including Spark Streaming for real-time input streams, MLlib for machine learning using RDDs, SQL for queries, and Graph-X 
+        for graphing. We will be using PySpark in this example, as the workflow is run locally. Unfortunately, PySpark does not have GraphX, but we will go over other functionality
+        such as machine learning, querying via SQL, and stream processing.
+    </p>
+    <br>
 </div>
