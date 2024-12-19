@@ -1,7 +1,9 @@
 <app-navbar></app-navbar>
 <div class="spark-body">
-    <h2>Spark Project: Analysis</h2>
+    <h1>Spark Project: Analysis</h1>
     <p>Purpose: To display the functionality and workflow of Spark</p>
+    <br>
+    <h2>Intro</h2>
     <br>
     <p>
         Spark is an engine used for working with large-scale data workloads that supports multiple programming languages including Python, Scala, and SQL.
@@ -19,4 +21,20 @@
         such as machine learning, querying via SQL, and stream processing.
     </p>
     <br>
+    <h2>Project</h2>
+    <p>We will be using a <a href="https://www.kaggle.com/datasets/valakhorasani/gym-members-exercise-dataset">Kaggle Dataset</a> that represents a number of gym members.
+        Each member is represented by an age, gender, session duration, etc. As stated earlier, the purpose of this project is not to get into the weeds of the dataset, 
+        but instead to show Spark functionality. With that being said, using the <i>spark.read.csv()</i> and <i>.show()</i> methods allow us to initialize a spark 
+        dataframe and show the contents. Typically, one will not be working with local files, but rather with data stored in the cloud. Reading a csv file from an 
+        S3 bucket would look something like <i>spark.read.option("header","true").csv("s3...")</i>
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/spark_read_show.png" class="img" id="spark_read_show">
+    </div>
+    <br> 
+    <p>Using <i>.show()</i> and <i>.printSchema()</i> allows us to visualize a subset of our data as well as the schema or structure of it.</p>
+    <p>Spark uses <b>Transformations</b> and <b>Actions</b> operations on RDDs and DataFrames. Transformations lazily create new RDDs and DFs while 
+        Actions trigger the execution of transformations immediately when called and return the output to the driver from the worker nodes. 
+        Examples of <b>transformations</b> include <i>filter()</i>, <i>map()</i>, and <i>select()</i></p> while examples of <b>actions</b> include
+
 </div>
