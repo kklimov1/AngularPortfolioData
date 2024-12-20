@@ -7,11 +7,11 @@
     <br>
     <p>
         Spark is an engine used for working with large-scale data workloads that supports multiple programming languages including Python, Scala, and SQL.
-        The fundamental aspect of Apache Spark is its use of RDD (or Resilient Distributed Dataset). An RDD 
+        A fundamental aspect of Apache Spark is its use of RDDs (or Resilient Distributed Datasets). An RDD 
         represents a collection of objects that are split across a cluster of machines that are typically referred to as nodes.
     </p>
     <p>
-        The driver node holds meta information, and, among other things, creates an interface for the analyst via the SparkContext. 
+        The driver node holds meta information, and, among other things, creates an interface for data analysts via the SparkContext. 
         The SparkContext determines a plan, and (via the Cluster Manager) coordinates the executor nodes to run certain tasks. Once the executor nodes complete their tasks,
         the results are returned to the driver node.
     </p>
@@ -23,9 +23,9 @@
     <br>
     <h2>Project</h2>
     <p>We will be using a <a href="https://www.kaggle.com/datasets/valakhorasani/gym-members-exercise-dataset">Kaggle Dataset</a> that represents a number of gym members.
-        Each member is represented by an age, gender, session duration, etc. As stated earlier, the purpose of this project is not to get into the weeds of the dataset, 
-        but instead to show Spark functionality. With that being said, using the <i>spark.read.csv()</i> and <i>.show()</i> methods allow us to initialize a spark 
-        dataframe and show the contents. Typically, one will not be working with local files, but rather with data stored in the cloud. Reading a csv file from an 
+        Each member is represented by attributes such as age, gender, workout session duration, and more. As stated earlier, the purpose of this project is not to get into the weeds of the dataset, 
+        but instead to show Spark functionality. With that being said, using the <i>spark.read.csv()</i> and <i>.show()</i> methods allow us to initialize a Spark 
+        DataFrame and display its contents. Typically, one does not work with local files, but rather with data stored in the cloud. Reading a csv file from an 
         S3 bucket would look something like <i>spark.read.option("header","true").csv("s3...").</i>
     </p>
     <div class="img-container">
@@ -51,9 +51,9 @@
     <p>
         <b>Gender</b> and <b>Workout Type</b> columns in our dataset are categorical. For utilization in regression models, it's best to one-hot encode them. First, we will 
         apply a <i>StringIndexer()</i> within a list comprehension to both <b>Workout Type</b> and <b>Gender</b>. Then we will apply a <i>OneHotEncoder</i> to the workout type, 
-        as gender will already be in it's reduce form (1 for Female, and 0 for Male). All of these functions will be housed within a Pipeline as separate stages. After fitting the pipeline 
+        as gender will already be in its binary form (1 for Female, and 0 for Male). All of these functions will be housed within a Pipeline as separate stages. After fitting the pipeline 
         to the Spark DataFrame, we use transformations to create a new DataFrame and drop the original <b>Gender</b> and <b>Workout Type</b> columns. Having one-hot-encoded the workout type column, 
-        it is now represented in a new vector format like so: <i>(vector_size, [index of 1 value], 1 )</i>. I won't bore you with the unraveling process here, but if you're curious, please 
+        it is now represented in a new vector format like so: <i>(vector size, index of value that is 1, 1 )</i>. The unraveling process isn't covered here, but if you're curious, please 
         check out the code within the <a href="https://github.com/kklimov1/AngularSparkDataScienceProject/blob/main/healthAnalysisCleaned.ipynb">GitHub</a>.
     </p>
     <div class="img-container">
@@ -63,14 +63,14 @@
 
     <br>
     <p>Having performed the unraveling steps outlined in my code, the categorical <b>Workout Type</b> column can now be represented  as separate columns. Typically, we would drop one column 
-        to limit the issue of multicollinearity, but for visual purposes, we have kept all of the workout types! The gender column does limit collinearity as it is only represented by one column 
+        to limit the issue of multicollinearity, but for visual purposes, we have kept all of the workout types! The gender column does limit collinearity, as it is only represented by one column 
         being <b>Gender_Female</b>.
     </p>
     <div class="img-container">
         <img src="assets/sparkAnalysis/workout_type.png" class="img" id="spark_workout_type">
     </div>
     <p>
-        After removing unecessary columns such as the indexed <b>Workout Type</b> and splitting our dataset into a train and test version, let's do some data exploration.
+        After removing unnecessary columns such as the indexed <b>Workout Type</b> and splitting our dataset into a train and test version, let's do some data exploration.
         One way would be to save your table to the Spark Catalog, and call SQL queries like so: 
     </p>
     <div class="img-container">
@@ -78,7 +78,7 @@
     </div>
     <br>
     <p>This is one way to view aggregate values. But what about creating a visual output? In my case, I exported the training set into a Tableau file, and created a calculated field to represent 
-        age bins within a Tableau dashbaord:</p>
+        age bins within a Tableau dashboard:</p>
     <div class="img-container">
         <img src="assets/sparkAnalysis/tableau_pic.png" class="img" id="tableau_pic">
     </div>
@@ -93,8 +93,8 @@
         <li>The average heart rate by each workout type is almost identical. Even when comparing Yoga to HIIT...</li>
         <li><b>I can't help but wonder if this dataset was randomly generated.</b> It's as if the numeric values were randomly chosen from a sample of data and allocated to random categories and ages.</li>
     </ul>
-    <p>A good practice when transforming your spark dataframe into a pandas dataframe is using <i>arrow optimization</i> before calling <i>.toPandas()</i>. Having done so 
-        let's look at the distributions of BMI and resting heart rate. Although the purpose of this project is to demonstrate Spark functionality, we will keep our eyes out on the relationshiop between any given 
+    <p>A good practice when transforming your Spark DataFrame into a Pandas DataFrame is using <i>arrow optimization</i> before calling <i>.toPandas()</i>. Having done so 
+        let's look at the distributions of BMI and resting heart rate. Although the purpose of this project is to demonstrate Spark functionality, we will keep an eye on the relationship between any given 
         variable and the resting heart rate, as resting heart rate is a good predictor of actual health.
     </p>
     <div class="img-container">
@@ -142,14 +142,14 @@
          correlation values are very insignificant, so not many conclusions can be drawn. For example, although counter-intuitive, if one is a male performing HIIT, 
          increasing fat_percentage is positively correlated with a falling resting heart rate. This goes against common sense but for the sake of this project, we will
           assume that these correlations have some basis in reality. However for females performing HIIT, a higher fat percentage is correlated with a higher
-           resting heart rate, and a rising session duration is postively correlated with a lowering heart rate, as one would expect. The other most positively
+           resting heart rate, and a rising session duration is positively correlated with a lowering heart rate, as one would expect. The other most positively
             correlated feature is Max_BPM for male strength exercises. If a male performing strength training hits a higher max heart rate, this might imply that he has
              a higher resting heart rate as well. <b>We can't make too many conclusions from this data, however, given the poor correlation values and small sample size.</b>
     </p>
     <p>
-        We would like to scale our values before training in on a machine learning algorithm. To do this, we will need to determine which columns will need scaling. 
+        We would like to scale our values before training on a machine learning algorithm. To do this, we will need to determine which columns will need scaling. 
         Specifically the ones that are not one-hot encoded... Then we will vectorize these columns, 
-        scale said vector using StandardScaler, turn them into an array and transform array items back into the dataframe non-array format.
+        scale said vector using StandardScaler, turn them into an array, and transform array items back into the DataFrame non-array format.
     </p>
     <div class="img-container">
         <img src="assets/sparkAnalysis/scale_1.png" class="img" id="scaling">
@@ -172,7 +172,7 @@
 
     <p>
         A useful method for converting a vector back into distinct columns is using the <i>vector_to_array()</i> function. Let's turn our vector back into a format that would be easier to visualize via
-         a dataframe. For each element in our vector, add it as a new dataframe column. Loop through the following columns using enumerate to get the vector location. We will do this for both the train and test dataframes.
+         a DataFrame. For each element in our vector, add it as a new DataFrame column. Loop through the following columns using enumerate to get the vector location. We will do this for both the train and test DataFrames.
     </p>
     <div class="img-container">
         <img src="assets/sparkAnalysis/enumerate.png" class="img" id="enumerate">
@@ -184,14 +184,14 @@
     <p>PySpark has built in machine learning models via <i>pyspark.ml</i></p>
     <p>
         We will access these models and train them on the scaled/one-hot-encoded vector of our training set. Assigning the name of said vector to <i>featuresCol</i> and the target variable to <i>labelCol</i> directs the regressors  
-        on how to be trained. 
+        on how they should be trained. 
     </p>
     <div class="img-container">
         <img src="assets/sparkAnalysis/regression_fit.png" class="img" id="regression_fit">
     </div>
 
     <p>
-        In this example, we will use a <i>RegressionEvaluator</i> with the performance metric set to root mean squared error (RMSE) to determine the model fit, as well as an R2 measurement to determine how
+        In this example, we will use a <i>RegressionEvaluator</i> with the performance metric set to root mean squared error (RMSE) to determine the model fit and the r<sup>2</sup> value to determine how
         well our model captures variance compared to a simple mean model.
     </p>
     <div class="img-container">
@@ -203,7 +203,7 @@
         <img src="assets/sparkAnalysis/predicted_vs_actual_bpm.png" class="img" id="scatter_predicted">
     </div>
     <p>
-        Calling our model useless would be generous. As we noted earlier when looking at training data, there does not seem to be any major linear correlation between <b>Resting Heart Rate</b>
+        Clearly, this model is far from reliable. As we noted earlier when looking at training data, there does not seem to be any major linear correlation between <b>Resting Heart Rate</b>
         and any of the other columns.
     </p>
     <p>
@@ -245,7 +245,9 @@
     </div>
 
     <h2>Conclusion</h2>
-    <p>Hopefully these examples shined some light on the workflow of Apache Spark, as well enhanced your understanding of the inner mechanisms. It is a wonderful tool for working with large datasets, and provides many 
-        tools for data scientists to gather insights and build models.
+    <p>Hopefully these examples shined some light on the workflow of Apache Spark, as well as enhanced your understanding of the inner mechanisms. It is a wonderful tool for working with large datasets, and provides many 
+        tools for data scientists to gather insights and build models. Working within Databricks with a connection to GCP, Azure, or AWS datasets allows for actual performance benefits, as the number of worker nodes can be scaled.
+        It is something that I highly recommend doing if you enjoy using this very refined tool and would like to squeeze all of the benefits out of distributed computing.
     </p>
+    <p>Happy Coding!</p>
 </div>
