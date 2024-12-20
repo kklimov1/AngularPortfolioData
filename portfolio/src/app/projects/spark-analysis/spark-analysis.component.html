@@ -1,7 +1,7 @@
 <app-navbar></app-navbar>
 <div class="spark-body">
     <h1>Spark Project: Analysis</h1>
-    <p>Purpose: To display the functionality and workflow of Spark</p>
+    <p><b>Purpose</b>: To display the functionality and workflow of Spark, and show visualization and modeling techniques.</p>
     <br>
     <h2>Intro</h2>
     <br>
@@ -112,6 +112,103 @@
         <img src="assets/sparkAnalysis/SparkCorr.png" class="img" id="spark_corr">
     </div>
     <div class="img-container">
-        <img src="assets/sparkAnalysis/bpm_bmi_histogram.png" class="img" id="bpm_bmi_hist">
+        <img src="assets/sparkAnalysis/SparkCorrDf.png" class="img" id="corr_matrix">
     </div>
+    <br>
+    <p>
+        Next, let's create a pairplot of resting heart rate with each variable along with a linear regression line of best fit. These charts would give us an idea whether or not age, fat percentage, BMI, etc. have any obvious 
+        correlation to <b>Resting BPM</b>.
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/bpm_pp_1.png" class="img" id="pplot_all">
+    </div>
+    <br>
+    <p>Generally, the linear correlation seems to be very close to 0. We can also decompose these values by creating these pair plots for each <b>Gender</b> and <b>Workout Type</b>
+        All of the plots can be found in the GitHub that is referenced above.
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/bpm_vs_gender_workout.png" class="img" id="pplot_all">
+    </div>
+    <br>
+    <p>Decomposing this data into its combinations of categories would allow us to fine-tune our understanding of how heart rate relates to known variables given a gender and workout type. We can also look at the 
+        linear correlation of <b>Resting Heart Rate</b> to every variable, for every gender and workout type, as a heatmap:
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/pearson_corr_heatmap.png" class="img" id="pearson_all">
+    </div>
+    <p>
+        Interestingly, gender and workout type seem to have somewhat important roles in helping us determine how best to optimize your workout in order to 
+         decrease your resting heart rate! Simply disregarding gender and workout type may not help one determine how to best minimize Resting BPM. The 
+         correlation values are very insignificant, so not many conclusions can be drawn. For example, although counter-intuitive, if one is a male performing HIIT, 
+         increasing fat_percentage is positively correlated with a falling resting heart rate. This goes against common sense but for the sake of this project, we will
+          assume that these correlations have some basis in reality. However for females performing HIIT, a higher fat percentage is correlated with a higher
+           resting heart rate, and a rising session duration is postively correlated with a lowering heart rate, as one would expect. The other most positively
+            correlated feature is Max_BPM for male strength exercises. If a male performing strength training hits a higher max heart rate, this might imply that he has
+             a higher resting heart rate as well. <b>We can't make too many conclusions from this data, however, given the poor correlation values and small sample size.</b>
+    </p>
+    <p>
+        We would like to scale our values before training in on a machine learning algorithm. To do this, we will need to determine which columns will need scaling. 
+        Specifically the ones that are not one-hot encoded... Then we will vectorize these columns, 
+        scale said vector using StandardScaler, turn them into an array and transform array items back into the dataframe non-array format.
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/scale_1.png" class="img" id="scaling">
+    </div>
+    <p>
+        The output vector looks like so (it does not include Resting Heart Rate as this will be what we will try to predict using the vector column):
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/vector_before_scaling.png" class="img" id="unscaled_vec_1">
+    </div>
+
+    <p>
+        After fitting <i>StandardScaler(inputCol="vector")</i> on our training set vector column, we transform the test set vector column as well and output the scaled results to a vector column that 
+        we will call <b>scaled_vector</b>.
+    </p>
+
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/scaled_vector0.png" class="img" id="scaled_vector">
+    </div>
+
+    <p>
+        A useful method for converting a vector back into distinct columns is using the <i>vector_to_array()</i> function. Let's turn our vector back into a format that would be easier to visualize via
+         a dataframe. For each element in our vector, add it as a new dataframe column. Loop through the following columns using enumerate to get the vector location. We will do this for both the train and test dataframes.
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/enumerate.png" class="img" id="enumerate">
+    </div>
+    <p>Our training and test data is now scaled, and has vectors and array for covering all variables other than the target column.</p>
+    <br>
+    <h2>Model Development</h2>
+    <p>As mentioned before, the purpose of this project is not to create a superb predictor, but only to show the workflow of a Spark project.</p>
+    <p>PySpark has built in machine learning models via <i>pyspark.ml</i></p>
+    <p>
+        We will access these models and train them on the scaled/one-hot-encoded vector of our training set. Assigning the name of said vector to <i>featuresCol</i> and the target variable to <i>labelCol</i> directs the regressors  
+        on how to be trained. 
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/regression_fit.png" class="img" id="regression_fit">
+    </div>
+
+    <p>
+        In this example, we will use a <i>RegressionEvaluator</i> with the performance metric set to root mean squared error (RMSE) to determine the model fit, as well as an R2 measurement to determine how
+        well our model captures variance compared to a simple mean model.
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/reg_evaluator.png" class="img" id="evaluator">
+    </div>
+    <p>What does this look like when comparing predicted vs actual resting heart rate? Let's plot this as a scatter plot.</p>
+
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/predicted_vs_actual_bpm.png" class="img" id="scatter_predicted">
+    </div>
+    <p>
+        Calling our model useless would be generous. As we noted earlier when looking at training data, there does not seem to be any major linear correlation between <b>Resting Heart Rate</b>
+        and any of the other columns.
+    </p>
+    <p>What about the r2 value? Running the following function unsurprisingly yields a less than perfect result: -43. Assuming that the dataset is non-random, it would certainly be possible 
+        to get a lower r2 value without overfitting by using more capable models, but that's not the purpose of this project.
+    </p>
+    
+
 </div>
