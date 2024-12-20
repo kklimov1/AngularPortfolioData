@@ -33,8 +33,85 @@
     </div>
     <br> 
     <p>Using <i>.show()</i> and <i>.printSchema()</i> allows us to visualize a subset of our data as well as the schema or structure of it.</p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/spark_printSchema.png" class="img" id="spark_printSchema">
+    </div>
     <p>Spark uses <b>Transformations</b> and <b>Actions</b> operations on RDDs and DataFrames. Transformations lazily create new RDDs and DFs while 
         Actions trigger the execution of transformations immediately when called and return the output to the driver from the worker nodes. 
-        Examples of <b>transformations</b> include <i>filter()</i>, <i>map()</i>, and <i>select()</i></p> while examples of <b>actions</b> include
+        Examples of <b>transformations</b> include <i>filter()</i>, <i>map()</i>, and <i>select()</i> while examples of <b>actions</b> include 
+        <i>take()</i> and <i>count()</i>. The following code represents the chaining of a transformation (<i>.select()</i>) which creates a new Spark DF, 
+        and an action (<i>.show()</i>) which triggers the execution and returns a result to the hypothetical driver node. In this case we are using a <i>select()</i> 
+        transformation partnered with a <i>count(), when(),</i> and <i>isnan()</i> functions within a list comprehension to determine the count of null values within each 
+        column. Calling <i>alias()</i> allows us to rename the columns and calling <i>.show()</i> triggers the execution of the transformations and returns the result.
+        As you can see, the dataset does not have any NULL values, so we may continue.
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/spark_null_values.png" class="img" id="spark_print_nulls">
+    </div>
+    <p>
+        <b>Gender</b> and <b>Workout Type</b> columns in our dataset are categorical. For utilization in regression models, it's best to one-hot encode them. First, we will 
+        apply a <i>StringIndexer()</i> within a list comprehension to both <b>Workout Type</b> and <b>Gender</b>. Then we will apply a <i>OneHotEncoder</i> to the workout type, 
+        as gender will already be in it's reduce form (1 for Female, and 0 for Male). All of these functions will be housed within a Pipeline as separate stages. After fitting the pipeline 
+        to the Spark DataFrame, we transform to create a new DataFrame and drop the original <b>Gender</b> and <b>Workout Type</b> columns. Having one-hot-encoded the workout type column, 
+        it is now represented in a new vector format like so: <i>(vector_size, [index of 1 value], 1 )</i>. I won't bore you with the unraveling process here, but if you're curious, please 
+        check out the code within the <a href="https://github.com/kklimov1/AngularSparkDataScienceProject/blob/main/healthAnalysisCleaned.ipynb">GitHub</a>.
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/spark_One_Hot_Encoder.png" class="img" id="spark_one_hot_encoder">
+        <img src="assets/sparkAnalysis/spark_One_Hot_Alt.png" class="img" id="spark_one_hot_encoder">
+    </div>
 
+    <br>
+    <p>Having performed the unraveling steps outlined in my code, the categorical <b>Workout Type</b> column can now be represented  as separate columns. Typically, we would drop one column 
+        to limit the issue of multicolinearity, but for visual purposes, we have kept all of the workout types! The gender column does limit multicolinearity as it is only represented by one column 
+        being <b>Gender_Female</b>
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/workout_type.png" class="img" id="spark_workout_type">
+    </div>
+    <p>
+        After removing unecessary columns such as the indexed <b>Workout Type</b> and splitting our dataset into a train and test version, let's do some data exploration.
+        One way would be to save your table to the Spark Catalog, and call SQL queries like so: 
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/catalog_sql.png" class="img" id="spark_one_hot_encoder">
+    </div>
+    <br>
+    <p>This is one way to view aggregate values. But what about creating a visual output? In my case, I exported the training set into a Tableau file, and created a calculated field to represent 
+        age bins within a Tableau dashbaord:</p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/tableau_pic.png" class="img" id="tableau_pic">
+    </div>
+    <p>
+        What can we tell by looking at this data?
+    </p>
+    <ul>
+        <li>The sample size of each gender is almost evenly split.</li>
+        <li>The training set is weighted more heavily towards those with little (level 1) to moderate (level 2) amounts of experience</li>
+        <li>Ages are almost evenly split across each pre-determined age bracket</li>
+        <li>Younger females (less than 36 years of age), tend to reach a *slightly* higher maximum heart rate than their male counterparts, while older males tend to reach a *slightly* higher maximum heart rate than their female counterparts.</li>
+        <li>The average heart rate by each workout type is almost identical. Even when comparing Yoga to HIIT...</li>
+        <li>**I can't help but wonder if this dataset was randomly generated**. It's as if the numeric values were randomly chosen from a sample of data and allocated to random categories and ages.</li>
+    </ul>
+    <p>A good practice when transforming your spark dataframe into a pandas dataframe is using <i>arrow optimization</i> before calling <i>.toPandas()</i>. Having done so 
+        let's look at the distributions of BMI and resting heart rate. Although the purpose of this project is to demonstrate Spark functionality, we will keep our eyes out on the relationshiop between any given 
+        variable and the resting heart rate, as resting heart rate is a good predictor of actual health.
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/bpm_bmi_histogram.png" class="img" id="bpm_bmi_hist">
+    </div>
+    <p>An interesting thing to note is that the <b>Resting BPM</b> distribution is non-normal given the state of the edges. I will assume that there is something wrong with the methodology, data, or the sample is too small. 
+        It is possible that those above or below a certain heart rate we categorized as having a "max" or "min" heart rate. Regardless, we will proceed.
+    </p>
+    
+    <p>
+        Although Spark has a correlation function, we address colinearity once again by using a correlation matrix within Pandas for visual purposes. Looking to reduce the number of dimensions 
+        by looking for a Pearson Correlation value of greater than 0.8, we perform the following calculation:
+    </p>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/SparkCorr.png" class="img" id="spark_corr">
+    </div>
+    <div class="img-container">
+        <img src="assets/sparkAnalysis/bpm_bmi_histogram.png" class="img" id="bpm_bmi_hist">
+    </div>
 </div>
