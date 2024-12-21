@@ -6,7 +6,7 @@
                 <img src="assets/GitHub_Lockup_Light.png" alt="GitHub Logo" class="ghub-logo">
             </a>
             <a href="https://www.linkedin.com/in/kirill-klimov-001/" class="image-button">
-                <img src="assets/in.png" alt="GitHub Logo" class="in-logo">
+                <img src="assets/in.png" alt="LinkedIn Logo" class="in-logo">
             </a>
         </span>
     </div>
@@ -18,14 +18,12 @@
         <mat-menu #sparkMenu="matMenu" yPosition="below">
             <div matRipple matRippleColor="rgba(0, 0, 255, 0.3)">
                 <button mat-menu-item routerLink = "/sparkAnalysis">Analysis</button>
-                <button mat-menu-item routerLink = "/sparkAnalysis">Technicals + Code</button>
             </div>
         </mat-menu>
         
         <button mat-flat-button [matMenuTriggerFor]="stockMenu" class="menu-button">Stock Predictor </button>
         <mat-menu #stockMenu="matMenu" yPosition="below">
             <button mat-menu-item routerLink = "/stockAnalysis">Analysis</button>
-            <button mat-menu-item routerLink = "/stockCode">Technicals + Code</button>
         </mat-menu>
 
         
