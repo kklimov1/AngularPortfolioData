@@ -47,12 +47,31 @@
         SPY, QQQ, SIVR, PPLT, USO, PALL, and GLD. 
     </p>
     <p>
-        Typically, one does not work with local files, but rather with data stored in the cloud. A local CSV file is currently used, but this will be transferred to AWS or GCP relatively soon.
+        Typically, one does not work with local files, but rather with data stored in the cloud. A local CSV file is currently used, but this will be transferred to AWS or GCP.
     </p>
 
-
+    <p>
+        Having imported our dataset, let's take a look at a sample of our data. 
+    </p>
     <div class="img-container">
-        <img src="assets/sparkAnalysis/spark_read_show.png" class="img" id="spark_read_show">
+        <img src="assets/stocksRegression/head_1.png" class="img" id="header">
     </div>
+    <p>
+        Now let's check the column data types and number of NULL values. There are far too many columns to fit into our output neatly, so I created my own function to show every second column. To view the full output, feel free to reference the GitHub.
+    </p>
+    <div class="img-container">
+        <img src="assets/stocksRegression/every_second.png" class="img" id="stock_2_info">
+    </div>
+    <p>What can we tell by looking at the data?</p>
+    <ul>
+        <li>Date is not of date type</li>
+        <li>NULLs. There are entire days with empty rows (probably weekends), and variables with many NULL entries.</li>
+        <li>Non-standardized prices and volume</li>
+    </ul>
+    <p>
+        What can be gathered when looking at the dataframe sample above? The close price of an index on one day does not equal the open price of said index on the following day. In order to account for the change in price after trading hours, we will look at the log returns
+        of the close prices only. We will choose to use log returns of closing prices, volume, and the log difference of high/low within the same trading day. This addresses the issue of scaling our values to an extent. But what are the charecteristics of
+        log differences that are so appealing to our use case? I will show you these characteristics in detail.
+    </p>
     <br> 
 </div>
